@@ -29,6 +29,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 app = FastAPI()
 
+# Liberar acesso de qualquer origem
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -37,6 +38,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Endpoint para forçar a criação da tabela (usar 1x)
 @app.get("/api/teste-criacao")
 def criar_tabela_manual():
     try:
@@ -45,6 +47,7 @@ def criar_tabela_manual():
     except Exception as e:
         return {"status": "erro", "mensagem": str(e)}
 
+# Envio de dados para o banco
 @app.post("/api/dados")
 async def receber_dados(request: Request):
     data = await request.json()
@@ -71,6 +74,7 @@ async def receber_dados(request: Request):
     finally:
         db.close()
 
+# Consulta de dados recentes
 @app.get("/api/ultimos")
 def listar_ultimos():
     db = SessionLocal()
